@@ -18,6 +18,54 @@ import { requireRole } from "./authz-middleware.js";
 import { rateLimiters } from "./rate-limiter.js";
 import { requestVerification, confirmVerification } from "./verification-store.js";
 import { requestPasswordReset, consumeResetToken } from "./reset-store.js";
+import { registerContract, openApiRouter } from "./lib/openapi-generator.js";
+
+// ── #334 – OpenAPI contracts for auth endpoints ───────────────────────────
+registerContract({
+  method: "POST",
+  path: "/api/v1/auth/register",
+  summary: "Register a new user account",
+  tags: ["auth"],
+  responses: {
+    201: { description: "Account created; returns token and user" },
+    409: { description: "Email already in use" },
+    422: { description: "Validation error" },
+  },
+});
+
+registerContract({
+  method: "POST",
+  path: "/api/v1/auth/login",
+  summary: "Authenticate with email and password",
+  tags: ["auth"],
+  responses: {
+    200: { description: "Authenticated; returns token and user" },
+    401: { description: "Invalid credentials" },
+    422: { description: "Validation error" },
+  },
+});
+
+registerContract({
+  method: "GET",
+  path: "/api/v1/auth/session",
+  summary: "Return the current authenticated session",
+  tags: ["auth"],
+  responses: {
+    200: { description: "Session info" },
+    401: { description: "Not authenticated" },
+  },
+});
+
+registerContract({
+  method: "POST",
+  path: "/api/v1/auth/logout",
+  summary: "Revoke the current session",
+  tags: ["auth"],
+  responses: {
+    200: { description: "Session revoked" },
+    401: { description: "Not authenticated" },
+  },
+});
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -173,6 +221,9 @@ export function createApp(): Express {
   app.get("/api/v1/admin/users", requireAuth, requireRole("admin"), (_req, res) => {
     res.json({ users: listUsers() });
   });
+
+  // ── #334 – serve generated OpenAPI spec at /openapi.json ─────────────────
+  app.use("/", openApiRouter());
 
   /**
    * Centralized error handler (#326).
