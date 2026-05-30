@@ -23,71 +23,21 @@ function AuthField(props: {
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("home");
-  const [email, setEmail] = useState("");
-  const [token, setToken] = useState("");
-  const [password, setPassword] = useState("");
-  const [msg, setMsg] = useState("");
-  const [signedIn, setSignedIn] = useState(true);
-  const [pending, setPending] = useState(false);
-  const [serverError, setServerError] = useState("");
-  const emailError = useMemo(() => (email && !email.includes("@") ? "Enter a valid email." : ""), [email]);
-  const passwordError = useMemo(() => (password && password.length < 8 ? "Password must be at least 8 characters." : ""), [password]);
+  const [state, setState] = useState(authStore.getState());
 
-  async function api(path: string, body: Record<string, string>) {
-    const res = await fetch(`${mobileConfig.apiBaseUrl}${path}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
+  useEffect(() => authStore.subscribe(setState), []);
+  useEffect(() => {
+    authStore.boot({
+      sessionId: "session-mobile-1",
+      sessions: [
+        { id: "session-mobile-1", device: "Pixel 7", lastSeen: "just now" },
+        { id: "session-mobile-2", device: "iPhone 14", lastSeen: "2h ago" },
+      ],
     });
-    return res;
-  }
+  }, []);
 
-  async function requestReset() {
-    if (emailError) return;
-    setPending(true);
-    try {
-      const res = await api("/auth/password-reset/request", { email });
-      setMsg(res.ok ? "If that account exists, reset instructions were sent." : "Unable to request reset.");
-      setServerError(res.ok ? "" : "Request failed");
-    } catch {
-      setMsg("Network error while requesting reset.");
-      setServerError("Network failure");
-    }
-    setPending(false);
-  }
-
-  async function completeReset() {
-    if (passwordError) return;
-    setPending(true);
-    try {
-      const res = await api("/auth/password-reset/complete", { token, password });
-      setMsg(res.ok ? "Password updated. Continue to sign in." : "Reset token is invalid or expired.");
-      setServerError(res.ok ? "" : "Reset failed");
-    } catch {
-      setMsg("Network error while completing reset.");
-      setServerError("Network failure");
-    }
-    setPending(false);
-  }
-
-  async function resendVerification() {
-    setPending(true);
-    try {
-      const res = await api("/auth/verify-email", { token });
-      setMsg(res.ok ? "Verification updated." : "Verification token is invalid or expired.");
-      setServerError(res.ok ? "" : "Verification failed");
-    } catch {
-      setMsg("Network error while verifying.");
-      setServerError("Network failure");
-    }
-    setPending(false);
-  }
-
-  function logout() {
-    setSignedIn(false);
-    setScreen("home");
-    setMsg("Signed out cleanly.");
+  if (state.isBooting) {
+    return <View style={styles.container}><Text style={styles.title}>Booting auth…</Text></View>;
   }
 
   async function parseDeepLink() {
