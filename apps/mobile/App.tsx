@@ -10,6 +10,23 @@ const tracks = [
 ];
 
 export default function App() {
+  const [state, setState] = useState(authStore.getState());
+
+  useEffect(() => authStore.subscribe(setState), []);
+  useEffect(() => {
+    authStore.boot({
+      sessionId: "session-mobile-1",
+      sessions: [
+        { id: "session-mobile-1", device: "Pixel 7", lastSeen: "just now" },
+        { id: "session-mobile-2", device: "iPhone 14", lastSeen: "2h ago" },
+      ],
+    });
+  }, []);
+
+  if (state.isBooting) {
+    return <View style={styles.container}><Text style={styles.title}>Booting auth…</Text></View>;
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
