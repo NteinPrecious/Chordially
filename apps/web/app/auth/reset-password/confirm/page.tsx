@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 
 type Phase = "idle" | "loading" | "success" | "expired" | "reused" | "error";
 
@@ -17,6 +17,7 @@ export default function ResetConfirmPage({
 }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [mismatch, setMismatch] = useState(false);
+  const submissionLock = useRef(false);
   const token = searchParams.token ?? "";
 
   if (!token) {
@@ -51,12 +52,14 @@ export default function ResetConfirmPage({
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submissionLock.current || phase === "loading") return;
     const data = new FormData(e.currentTarget);
     const password = data.get("password") as string;
     const confirm = data.get("confirm") as string;
 
     if (password !== confirm) { setMismatch(true); return; }
     setMismatch(false);
+    submissionLock.current = true;
     setPhase("loading");
 
     try {
@@ -71,6 +74,8 @@ export default function ResetConfirmPage({
       else setPhase("error");
     } catch {
       setPhase("error");
+    } finally {
+      submissionLock.current = false;
     }
   }
 

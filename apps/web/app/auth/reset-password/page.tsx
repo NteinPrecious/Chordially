@@ -1,14 +1,17 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 
 type Phase = "idle" | "loading" | "sent" | "error";
 
 export default function ResetRequestPage() {
   const [phase, setPhase] = useState<Phase>("idle");
+  const submissionLock = useRef(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submissionLock.current || phase === "loading") return;
+    submissionLock.current = true;
     setPhase("loading");
     const email = new FormData(e.currentTarget).get("email") as string;
 
@@ -21,6 +24,8 @@ export default function ResetRequestPage() {
       setPhase("sent");
     } catch {
       setPhase("error");
+    } finally {
+      submissionLock.current = false;
     }
   }
 
