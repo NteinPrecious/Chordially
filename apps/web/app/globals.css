@@ -1,144 +1,53 @@
 :root {
-  color-scheme: light;
-  --bg: #f3efe6;
-  --panel: rgba(255, 252, 247, 0.88);
-  --ink: #1f1a17;
-  --muted: #6f6259;
-  --accent: #c45a2d;
-  --accent-strong: #9a3f19;
-  --border: rgba(31, 26, 23, 0.12);
+  color-scheme: light dark;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html,
 body {
   margin: 0;
-  min-height: 100%;
-  background:
-    radial-gradient(circle at top left, rgba(196, 90, 45, 0.2), transparent 30%),
-    linear-gradient(180deg, #fbf6ee 0%, var(--bg) 100%);
-  color: var(--ink);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.page-shell {
-  max-width: 1040px;
+main {
+  max-width: 28rem;
   margin: 0 auto;
-  padding: 48px 20px 80px;
+  padding: 2rem 1.5rem;
 }
 
-.hero,
-.detail-panel,
-.milestone-card {
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  background: var(--panel);
-  box-shadow: 0 16px 48px rgba(36, 22, 12, 0.08);
-}
-
-.hero,
-.detail-panel {
-  padding: 32px;
-}
-
-.hero h1,
-.detail-panel h1 {
-  margin: 0 0 16px;
-  font-size: clamp(2.6rem, 7vw, 5.2rem);
-  line-height: 0.96;
-}
-
-.lede {
-  max-width: 42rem;
-  color: var(--muted);
-  font-size: 1.05rem;
-  line-height: 1.7;
-}
-
-.eyebrow {
-  margin: 0 0 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 0.76rem;
-  color: var(--accent-strong);
-}
-
-.cta-row {
+form {
   display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 28px;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.primary-link,
-.secondary-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 0 18px;
-  border-radius: 999px;
-  transition: transform 150ms ease, background-color 150ms ease;
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
 }
 
-.primary-link {
-  background: var(--accent);
-  color: white;
+input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
 }
 
-.secondary-link {
-  border: 1px solid var(--border);
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
-.primary-link:hover,
-.secondary-link:hover {
-  transform: translateY(-1px);
+[role="alert"] {
+  color: #b00020;
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
 }
 
-.milestone-grid {
-  display: grid;
-  gap: 18px;
-  margin-top: 24px;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-}
-
-.milestone-card {
-  padding: 24px;
-}
-
-.milestone-card h2,
-.detail-panel h2 {
-  margin-top: 0;
-  margin-bottom: 12px;
-  font-size: 1.3rem;
-}
-
-.milestone-card p,
-.step-list {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.65;
-}
-
-.step-list {
-  padding-left: 20px;
-}
-
-@media (max-width: 640px) {
-  .page-shell {
-    padding-top: 24px;
-  }
-
-  .hero,
-  .detail-panel {
-    padding: 24px;
-  }
+[role="status"] {
+  color: #1a7f37;
 }

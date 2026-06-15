@@ -8,9 +8,16 @@
 .DS_Store
 .env*
 !.env.example
+!.env.test
 *.tsbuildinfo
 next-env.d.ts
 .expo
 **/.expo
 .turbo
 .local/
+*.db
+*.db-journal
+expo-env.d.ts
+apps/mobile/ios
+apps/mobile/android
+apps/mobile/web-build
